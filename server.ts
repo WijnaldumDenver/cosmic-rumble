@@ -47,6 +47,8 @@ app
         console.log(`> Socket.io path: /api/socket`);
         console.log(`> Environment: ${process.env.NODE_ENV}`);
         console.log(`> PORT: ${port}, HOSTNAME: ${hostname}`);
+        console.log(`> Health check available at: /api/health`);
+        console.log(`> Server is ready to accept connections`);
       });
   })
   .catch((err) => {
