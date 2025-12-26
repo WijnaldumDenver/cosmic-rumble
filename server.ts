@@ -1,41 +1,48 @@
 // Custom Next.js Server with WebSocket Support
 // Run with: node server.ts
 
-import { createServer } from "http"
-import { parse } from "url"
-import next from "next"
-import { GameSocketServer } from "./lib/socket/server"
+import { createServer } from "http";
+import { parse } from "url";
+import next from "next";
+import { GameSocketServer } from "./lib/socket/server";
 
-const dev = process.env.NODE_ENV !== "production"
-const hostname = process.env.HOSTNAME || "0.0.0.0" // Railway needs 0.0.0.0
-const port = parseInt(process.env.PORT || "3000", 10)
+const dev = process.env.NODE_ENV !== "production";
+const hostname = process.env.HOSTNAME || "0.0.0.0"; // Railway needs 0.0.0.0
+const port = parseInt(process.env.PORT || "3000", 10);
 
-const app = next({ dev, hostname, port })
-const handle = app.getRequestHandler()
+const app = next({ dev, hostname, port });
+const handle = app.getRequestHandler();
 
-app.prepare().then(() => {
-  const httpServer = createServer(async (req, res) => {
-    try {
-      const parsedUrl = parse(req.url!, true)
-      await handle(req, res, parsedUrl)
-    } catch (err) {
-      console.error("Error occurred handling", req.url, err)
-      res.statusCode = 500
-      res.end("internal server error")
-    }
+app
+  .prepare()
+  .then(() => {
+    const httpServer = createServer(async (req, res) => {
+      try {
+        const parsedUrl = parse(req.url!, true);
+        await handle(req, res, parsedUrl);
+      } catch (err) {
+        console.error("Error occurred handling", req.url, err);
+        res.statusCode = 500;
+        res.end("internal server error");
+      }
+    });
+
+    // Initialize WebSocket server
+    const socketServer = new GameSocketServer(httpServer);
+
+    httpServer
+      .once("error", (err) => {
+        console.error("HTTP Server Error:", err);
+        process.exit(1);
+      })
+      .listen(port, hostname, () => {
+        console.log(`> WebSocket server ready on http://${hostname}:${port}`);
+        console.log(`> Socket.io path: /api/socket`);
+        console.log(`> Environment: ${process.env.NODE_ENV}`);
+        console.log(`> PORT: ${port}, HOSTNAME: ${hostname}`);
+      });
   })
-
-  // Initialize WebSocket server
-  const socketServer = new GameSocketServer(httpServer)
-
-  httpServer
-    .once("error", (err) => {
-      console.error(err)
-      process.exit(1)
-    })
-    .listen(port, hostname, () => {
-      console.log(`> WebSocket server ready on http://${hostname}:${port}`)
-      console.log(`> Socket.io path: /api/socket`)
-    })
-})
-
+  .catch((err) => {
+    console.error("Failed to prepare Next.js app:", err);
+    process.exit(1);
+  });
