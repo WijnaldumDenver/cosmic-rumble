@@ -34,6 +34,7 @@ export interface PlayerState {
   username: string
   hp: number
   hand: (CharacterCard | ItemCard)[]
+  deck?: (CharacterCard | ItemCard)[] // Remaining deck cards
   deployedCharacters: CharacterCard[]
   deployedItems: ItemCard[]
   planCard: CharacterCard | ItemCard | null // Hidden saved card

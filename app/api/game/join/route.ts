@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import { loadUserCards, createDeck, drawInitialHand } from "@/lib/game/cards"
 
 export const dynamic = 'force-dynamic'
 
@@ -69,6 +70,19 @@ export async function POST(request: Request) {
       )
     }
 
+    // Load user's cards
+    const userCards = await loadUserCards(session.user.id)
+    if (userCards.length === 0) {
+      return NextResponse.json(
+        { error: "You need at least one card to join a game. Visit the shop or spin the wheel!" },
+        { status: 400 }
+      )
+    }
+
+    // Create deck and initial hand
+    const deck = createDeck(userCards)
+    const { hand, remainingDeck } = drawInitialHand(deck)
+
     // Join game
     await prisma.gameSessionPlayer.create({
       data: {
@@ -79,13 +93,14 @@ export async function POST(request: Request) {
           userId: session.user.id,
           username: session.user.username,
           hp: 100,
-          hand: [],
+          hand: hand,
+          deck: remainingDeck,
           deployedCharacters: [],
           deployedItems: [],
           planCard: null,
           position: gameSession.players.length,
           isActive: true,
-        },
+        } as any,
       },
     })
 

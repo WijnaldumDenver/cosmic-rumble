@@ -42,6 +42,7 @@ export class GameEngine {
         username: player.user.username,
         hp: playerState?.hp ?? 100,
         hand: playerState?.hand ?? [],
+        deck: playerState?.deck ?? [],
         deployedCharacters: playerState?.deployedCharacters ?? [],
         deployedItems: playerState?.deployedItems ?? [],
         planCard: playerState?.planCard ?? null,
@@ -113,8 +114,32 @@ export class GameEngine {
       return { success: false, error: "Not in draw phase" }
     }
 
-    // TODO: Implement card drawing logic
-    // For now, just advance to deploy phase
+    const player = this.state.players[playerId]
+    if (!player) {
+      return { success: false, error: "Player not found" }
+    }
+
+    // Draw a card from deck
+    const deck = player.deck || []
+    if (deck.length === 0) {
+      // No cards left in deck - skip drawing but still advance phase
+      this.state.currentPhase = "deploy"
+      return {
+        success: true,
+        updates: {
+          phase: "deploy",
+          playerId,
+          message: "No cards left in deck",
+        },
+      }
+    }
+
+    // Draw one card
+    const drawnCard = deck[0]
+    player.hand.push(drawnCard)
+    player.deck = deck.slice(1)
+
+    // Advance to deploy phase
     this.state.currentPhase = "deploy"
 
     return {
@@ -122,6 +147,7 @@ export class GameEngine {
       updates: {
         phase: "deploy",
         playerId,
+        drawnCard,
       },
     }
   }
@@ -229,7 +255,12 @@ export class GameEngine {
           killed = true
 
           // Momentum rule: draw card on kill
-          // TODO: Implement card drawing
+          const attackerDeck = attacker.deck || []
+          if (attackerDeck.length > 0) {
+            const momentumCard = attackerDeck[0]
+            attacker.hand.push(momentumCard)
+            attacker.deck = attackerDeck.slice(1)
+          }
         } else {
           damage = actualDamage
         }

@@ -125,11 +125,39 @@ export default function GamePage() {
                     <div className="font-semibold">HP: <span className="text-red-400 font-bold">{player.hp}</span></div>
                     <div className="font-semibold">Characters: <span className="text-crossover-accent font-bold">{player.deployedCharacters.length}</span></div>
                     <div className="font-semibold">Items: <span className="text-crossover-secondary font-bold">{player.deployedItems.length}</span></div>
-                    <div className="font-semibold">Hand: <span className="text-crossover-gold font-bold">{player.hand.length} cards</span></div>
+                    <div className="font-semibold">Hand: <span className="text-crossover-gold font-bold">{player.hand?.length || 0} cards</span></div>
+                    <div className="font-semibold">Deck: <span className="text-crossover-primary font-bold">{player.deck?.length || 0} cards</span></div>
                   </div>
                 </motion.div>
               ))}
             </div>
+
+            {/* Player's Hand */}
+            {gameState.players[session.user.id] && (
+              <div className="card-bg rounded-xl p-6 border-2 border-crossover-gold/30">
+                <h2 className="text-2xl font-bold mb-4 text-white">Your Hand</h2>
+                {gameState.players[session.user.id].hand?.length > 0 ? (
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    {gameState.players[session.user.id].hand.map((card: any, index: number) => (
+                      <div
+                        key={`${card.id}-${index}`}
+                        className="bg-crossover-dark/50 rounded-lg p-3 border-2 border-crossover-primary/30 hover:border-crossover-primary/50 transition-all"
+                      >
+                        <div className="text-sm font-bold text-white truncate">{card.name}</div>
+                        <div className="text-xs text-white/70 mt-1">{card.cardType || card.rarity}</div>
+                        {card.power !== undefined && (
+                          <div className="text-xs text-crossover-accent mt-1">
+                            P: {card.power} D: {card.defense} S: {card.speed}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-white/70">No cards in hand</p>
+                )}
+              </div>
+            )}
 
             {/* Game Actions */}
             {gameState.currentTurnPlayerId === session.user.id && gameState.status === "active" && (
