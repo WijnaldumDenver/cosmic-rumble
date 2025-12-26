@@ -1,0 +1,306 @@
+// Prisma Schema for UniRumble Card Game
+// Server-authoritative, production-grade schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Rarity {
+  Common
+  Uncommon
+  Rare
+  Epic
+  Legendary
+  Mythical
+}
+
+enum Rank {
+  Bronze
+  Silver
+  Gold
+  Diamond
+  Sapphire
+  Ruby
+  Emerald
+  Platinum
+}
+
+enum GameStatus {
+  Waiting
+  Active
+  Finished
+}
+
+enum UserRole {
+  User
+  Admin
+}
+
+// ============================================
+// USER & AUTH
+// ============================================
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  username          String    @unique
+  password          String    // hashed with bcrypt
+  realName          String?
+  dateOfBirth       DateTime?
+  role              UserRole  @default(User)
+  
+  // Game Stats
+  verseCoins        Int       @default(0)
+  rank              Rank      @default(Bronze)
+  gamesPlayed       Int       @default(0)
+  gamesWon          Int       @default(0)
+  gamesLost         Int       @default(0)
+  
+  // Penalty System
+  penaltyUntil      DateTime?
+  
+  // Weekly Wheel
+  weeklyWheelLastSpin DateTime?
+  
+  // Relations
+  unlockedCards     UnlockedCard[]
+  gameSessions      GameSessionPlayer[]
+  hostedGames       GameSession[] @relation("Host")
+  tags              UserTag[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+// ============================================
+// TAGS (Many-to-Many)
+// ============================================
+
+model Tag {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  
+  // Relations
+  characterCardTags CharacterCardTag[] @relation("CharacterCardTags")
+  itemCardTags     ItemCardTag[] @relation("ItemCardTags")
+  battlefieldCardTags BattlefieldCardTag[] @relation("BattlefieldCardTags")
+  users          UserTag[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model UserTag {
+  id        String   @id @default(cuid())
+  userId    String
+  tagId     String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, tagId])
+}
+
+// ============================================
+// CARDS
+// ============================================
+
+model CharacterCard {
+  id              String   @id @default(cuid())
+  franchise       String
+  imageUrl        String
+  name            String
+  rarity          Rarity
+  power           Int
+  defense         Int
+  speed           Int
+  description     String?
+  ability         String?  // JSON string for ability effects
+  isWheelEligible Boolean  @default(true)
+  shopPrice       Int?     // null = not available in shop
+  
+  // Relations
+  tags            CharacterCardTag[]
+  // Note: unlockedBy is queried via UnlockedCard using cardType="Character" and cardId
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([rarity])
+  @@index([isWheelEligible])
+}
+
+model ItemCard {
+  id              String   @id @default(cuid())
+  franchise       String
+  imageUrl        String
+  name            String
+  rarity          Rarity
+  description     String?
+  effect          String   // JSON string for effect
+  isWheelEligible Boolean  @default(true)
+  shopPrice       Int?
+  
+  // Relations
+  tags            ItemCardTag[]
+  // Note: unlockedBy is queried via UnlockedCard using cardType="Item" and cardId
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([rarity])
+  @@index([isWheelEligible])
+}
+
+model BattlefieldCard {
+  id              String   @id @default(cuid())
+  franchise       String
+  imageUrl        String
+  name            String
+  description     String?
+  effect          String   // JSON string for effect
+  shopPrice       Int?
+  
+  // Relations
+  tags            BattlefieldCardTag[]
+  gameSessions    GameSession[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Many-to-Many: Cards <-> Tags
+model CharacterCardTag {
+  id              String   @id @default(cuid())
+  characterCardId String
+  tagId           String
+  characterCard  CharacterCard @relation(fields: [characterCardId], references: [id], onDelete: Cascade)
+  tag             Tag      @relation("CharacterCardTags", fields: [tagId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime @default(now())
+  
+  @@unique([characterCardId, tagId])
+  @@index([characterCardId])
+}
+
+model ItemCardTag {
+  id              String   @id @default(cuid())
+  itemCardId      String
+  tagId           String
+  itemCard        ItemCard @relation(fields: [itemCardId], references: [id], onDelete: Cascade)
+  tag             Tag      @relation("ItemCardTags", fields: [tagId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime @default(now())
+  
+  @@unique([itemCardId, tagId])
+  @@index([itemCardId])
+}
+
+model BattlefieldCardTag {
+  id              String   @id @default(cuid())
+  battlefieldCardId String
+  tagId           String
+  battlefieldCard BattlefieldCard @relation(fields: [battlefieldCardId], references: [id], onDelete: Cascade)
+  tag             Tag      @relation("BattlefieldCardTags", fields: [tagId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime @default(now())
+  
+  @@unique([battlefieldCardId, tagId])
+  @@index([battlefieldCardId])
+}
+
+// Many-to-Many: Users <-> Cards
+model UnlockedCard {
+  id              String   @id @default(cuid())
+  userId          String
+  cardType        String   // "Character" | "Item" | "Battlefield"
+  cardId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Note: We can't have direct relations to card types due to polymorphic nature
+  // Query manually using cardType and cardId
+  
+  unlockedAt      DateTime @default(now())
+  
+  @@unique([userId, cardType, cardId])
+  @@index([userId])
+  @@index([cardType, cardId])
+}
+
+// ============================================
+// GAME SESSIONS
+// ============================================
+
+model GameSession {
+  id                  String   @id @default(cuid())
+  hostId              String
+  host                User     @relation("Host", fields: [hostId], references: [id])
+  status              GameStatus @default(Waiting)
+  maxPlayers          Int      @default(4) // 2-4 players
+  battlefieldCardId   String?
+  battlefieldCard     BattlefieldCard? @relation(fields: [battlefieldCardId], references: [id])
+  
+  // Game State (server-authoritative JSON)
+  gameState           Json     // Contains: turnOrder, currentTurn, playerStates, etc.
+  
+  // Relations
+  players             GameSessionPlayer[]
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  @@index([status])
+  @@index([hostId])
+}
+
+model GameSessionPlayer {
+  id              String       @id @default(cuid())
+  gameSessionId   String
+  gameSession     GameSession  @relation(fields: [gameSessionId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User         @relation(fields: [userId], references: [id])
+  
+  // Player-specific game state
+  playerState     Json         // Hand, deployed cards, HP, etc.
+  position        Int          // Turn order position
+  isActive        Boolean      @default(true)
+  
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  @@unique([gameSessionId, userId])
+  @@index([gameSessionId])
+  @@index([userId])
+}
+
+// ============================================
+// MATCH HISTORY
+// ============================================
+
+model MatchHistory {
+  id              String   @id @default(cuid())
+  gameSessionId  String
+  winnerId       String
+  loserIds       String[] // Array of user IDs who lost
+  verseCoinsReward Int
+  rankPointsChange Int    // Can be negative for losers
+  duration       Int      // Duration in seconds
+  endedAt        DateTime @default(now())
+  
+  createdAt      DateTime @default(now())
+  
+  @@index([winnerId])
+  @@index([endedAt])
+}
+
