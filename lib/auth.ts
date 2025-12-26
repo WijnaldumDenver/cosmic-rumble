@@ -68,15 +68,5 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  secret:
-    process.env.NEXTAUTH_SECRET ||
-    (() => {
-      // During build, Railway might not expose env vars, so always provide a fallback
-      // NextAuth accepts any non-empty string, so we provide a valid placeholder
-      // Runtime validation in route handler will ensure real secret is set
-      if (process.env.NODE_ENV === "production") {
-        return "YnVpbGQtcGxhY2Vob2xkZXItc2VjcmV0LW11c3Qtc2V0LWluLXByb2Q=";
-      }
-      return "dev-secret-change-in-production";
-    })(),
+  secret: process.env.NEXTAUTH_SECRET,
 };

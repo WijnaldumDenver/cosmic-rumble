@@ -1,33 +1,15 @@
 // WebSocket API Route Handler
-// This is a placeholder route for Socket.io connections
-// 
-// IMPORTANT: Vercel does NOT support custom Node.js servers or WebSockets
-// To enable real-time multiplayer, you need to:
-// 1. Deploy the custom server (server.ts) to Railway, Render, or similar
-// 2. Set NEXT_PUBLIC_SOCKET_URL to that server's URL
-// 3. Or use a WebSocket service like Pusher/Ably
-//
-// For local development, run: pnpm dev:server
+// This will be used by Next.js to handle WebSocket connections
 
 import { NextRequest } from "next/server"
 
-export const dynamic = 'force-dynamic'
+// Note: In Next.js App Router, WebSocket handling is typically done
+// through a custom server. This route is a placeholder.
+// For production, you'll need to set up a custom server or use a separate WebSocket server.
 
 export async function GET(request: NextRequest) {
-  // Return a JSON response that Socket.io can handle
-  // This will cause Socket.io to fall back to polling
-  return new Response(
-    JSON.stringify({
-      error: "WebSocket server not available",
-      message: "This endpoint requires a custom server. WebSocket features are disabled on Vercel.",
-      fallback: "Use polling transport or deploy custom server separately",
-    }),
-    {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  )
+  return new Response("WebSocket endpoint - use custom server", {
+    status: 200,
+  })
 }
 
