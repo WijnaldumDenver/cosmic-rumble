@@ -6,9 +6,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "noEmit": false,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "skipLibCheck": true
   },
-  "include": ["server.ts", "lib/**/*.ts"],
+  "include": ["server.ts", "lib/**/*.ts", "types/**/*.ts"],
   "exclude": ["node_modules"]
 }
-

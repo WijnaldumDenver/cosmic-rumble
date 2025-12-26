@@ -1,20 +1,30 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 export default function WheelPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const router = useRouter()
   const [spinning, setSpinning] = useState(false)
   const [result, setResult] = useState<any>(null)
   const [error, setError] = useState("")
 
-  if (!session) {
-    router.push("/auth/signin")
-    return null
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin")
+    }
+  }, [status, router])
+
+  if (status === "loading" || !session) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        <div className="text-2xl">Loading...</div>
+      </div>
+    )
   }
 
   const handleSpin = async () => {
@@ -101,11 +111,15 @@ export default function WheelPage() {
                   <div className="text-2xl font-bold mb-2 text-white">{result.name}</div>
                   <div className="text-lg capitalize font-semibold text-crossover-gold">{result.rarity}</div>
                   {result.imageUrl && (
-                    <img
-                      src={result.imageUrl}
-                      alt={result.name}
-                      className="w-32 h-32 mx-auto mt-4 rounded-lg border-2 border-crossover-gold/50"
-                    />
+                    <div className="relative w-32 h-32 mx-auto mt-4 rounded-lg overflow-hidden border-2 border-crossover-gold/50">
+                      <Image
+                        src={result.imageUrl}
+                        alt={result.name}
+                        fill
+                        className="object-cover"
+                        sizes="128px"
+                      />
+                    </div>
                   )}
                 </div>
               </motion.div>

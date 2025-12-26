@@ -1,118 +1,139 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useMemo } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
+import { useState, useEffect, useMemo } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
 interface Card {
-  id: string
-  name: string
-  imageUrl: string
-  rarity: string
-  franchise: string
-  description?: string
-  type: "Character" | "Item" | "Battlefield"
-  power?: number
-  defense?: number
-  speed?: number
-  unlockedAt: string
+  id: string;
+  name: string;
+  imageUrl: string;
+  rarity: string;
+  franchise: string;
+  description?: string;
+  type: "Character" | "Item" | "Battlefield";
+  power?: number;
+  defense?: number;
+  speed?: number;
+  unlockedAt: string;
 }
 
 export default function CollectionPage() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
-  const [cards, setCards] = useState<Card[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [cards, setCards] = useState<Card[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Filters and search
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedRarity, setSelectedRarity] = useState<string>("all")
-  const [selectedType, setSelectedType] = useState<string>("all")
-  const [selectedFranchise, setSelectedFranchise] = useState<string>("all")
-  const [sortBy, setSortBy] = useState<"name" | "rarity" | "unlocked">("name")
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRarity, setSelectedRarity] = useState<string>("all");
+  const [selectedType, setSelectedType] = useState<string>("all");
+  const [selectedFranchise, setSelectedFranchise] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<"name" | "rarity" | "unlocked">("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/auth/signin")
-      return
+      router.push("/auth/signin");
+      return;
     }
 
     if (session) {
-      fetchCollection()
+      fetchCollection();
     }
-  }, [session, status, router])
+  }, [session, status, router]);
 
   const fetchCollection = async () => {
     try {
-      const response = await fetch("/api/collection/cards")
+      const response = await fetch("/api/collection/cards");
 
       if (response.ok) {
-        const data = await response.json()
-        setCards(data.cards || [])
+        const data = await response.json();
+        setCards(data.cards || []);
       }
     } catch (err) {
-      console.error("Error fetching collection:", err)
+      console.error("Error fetching collection:", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Get unique franchises for filter
   const franchises = useMemo(() => {
-    const unique = Array.from(new Set(cards.map((c) => c.franchise)))
-    return unique.sort()
-  }, [cards])
+    const unique = Array.from(new Set(cards.map((c) => c.franchise)));
+    return unique.sort();
+  }, [cards]);
 
   // Filter and sort cards
   const filteredAndSortedCards = useMemo(() => {
     let filtered = cards.filter((card) => {
       // Search filter
-      if (searchQuery && !card.name.toLowerCase().includes(searchQuery.toLowerCase())) {
-        return false
+      if (
+        searchQuery &&
+        !card.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ) {
+        return false;
       }
 
       // Rarity filter
       if (selectedRarity !== "all" && card.rarity !== selectedRarity) {
-        return false
+        return false;
       }
 
       // Type filter
       if (selectedType !== "all" && card.type !== selectedType) {
-        return false
+        return false;
       }
 
       // Franchise filter
       if (selectedFranchise !== "all" && card.franchise !== selectedFranchise) {
-        return false
+        return false;
       }
 
-      return true
-    })
+      return true;
+    });
 
     // Sort
     filtered.sort((a, b) => {
-      let comparison = 0
+      let comparison = 0;
 
       switch (sortBy) {
         case "name":
-          comparison = a.name.localeCompare(b.name)
-          break
+          comparison = a.name.localeCompare(b.name);
+          break;
         case "rarity":
-          const rarityOrder = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythical"]
-          comparison = rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity)
-          break
+          const rarityOrder = [
+            "Common",
+            "Uncommon",
+            "Rare",
+            "Epic",
+            "Legendary",
+            "Mythical",
+          ];
+          comparison =
+            rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity);
+          break;
         case "unlocked":
-          comparison = new Date(a.unlockedAt).getTime() - new Date(b.unlockedAt).getTime()
-          break
+          comparison =
+            new Date(a.unlockedAt).getTime() - new Date(b.unlockedAt).getTime();
+          break;
       }
 
-      return sortOrder === "asc" ? comparison : -comparison
-    })
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
 
-    return filtered
-  }, [cards, searchQuery, selectedRarity, selectedType, selectedFranchise, sortBy, sortOrder])
+    return filtered;
+  }, [
+    cards,
+    searchQuery,
+    selectedRarity,
+    selectedType,
+    selectedFranchise,
+    sortBy,
+    sortOrder,
+  ]);
 
   const getRarityClass = (rarity: string) => {
     const rarityMap: Record<string, string> = {
@@ -122,35 +143,35 @@ export default function CollectionPage() {
       Epic: "rarity-epic",
       Legendary: "rarity-legendary",
       Mythical: "rarity-mythical",
-    }
-    return rarityMap[rarity] || "rarity-common"
-  }
+    };
+    return rarityMap[rarity] || "rarity-common";
+  };
 
   // Calculate collection stats
   const collectionStats = useMemo(() => {
-    const total = cards.length
+    const total = cards.length;
     const byRarity = cards.reduce((acc, card) => {
-      acc[card.rarity] = (acc[card.rarity] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
+      acc[card.rarity] = (acc[card.rarity] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
     const byType = cards.reduce((acc, card) => {
-      acc[card.type] = (acc[card.type] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
+      acc[card.type] = (acc[card.type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
-    return { total, byRarity, byType }
-  }, [cards])
+    return { total, byRarity, byType };
+  }, [cards]);
 
   if (status === "loading" || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
         <div className="text-2xl">Loading collection...</div>
       </div>
-    )
+    );
   }
 
   if (!session) {
-    return null
+    return null;
   }
 
   return (
@@ -161,7 +182,9 @@ export default function CollectionPage() {
             My Collection
           </h1>
           <div className="card-bg rounded-xl px-6 py-3 border-2 border-crossover-secondary/30">
-            <div className="text-sm text-white/70 font-semibold">Total Cards</div>
+            <div className="text-sm text-white/70 font-semibold">
+              Total Cards
+            </div>
             <div className="text-2xl font-black text-crossover-secondary">
               {collectionStats.total}
             </div>
@@ -171,19 +194,25 @@ export default function CollectionPage() {
         {/* Collection Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="card-bg rounded-xl p-4 border-2 border-crossover-accent/30">
-            <div className="text-sm text-white/70 font-semibold mb-2">Characters</div>
+            <div className="text-sm text-white/70 font-semibold mb-2">
+              Characters
+            </div>
             <div className="text-2xl font-black text-crossover-accent">
               {collectionStats.byType.Character || 0}
             </div>
           </div>
           <div className="card-bg rounded-xl p-4 border-2 border-crossover-primary/30">
-            <div className="text-sm text-white/70 font-semibold mb-2">Items</div>
+            <div className="text-sm text-white/70 font-semibold mb-2">
+              Items
+            </div>
             <div className="text-2xl font-black text-crossover-primary">
               {collectionStats.byType.Item || 0}
             </div>
           </div>
           <div className="card-bg rounded-xl p-4 border-2 border-crossover-gold/30">
-            <div className="text-sm text-white/70 font-semibold mb-2">Battlefields</div>
+            <div className="text-sm text-white/70 font-semibold mb-2">
+              Battlefields
+            </div>
             <div className="text-2xl font-black text-crossover-gold">
               {collectionStats.byType.Battlefield || 0}
             </div>
@@ -195,7 +224,9 @@ export default function CollectionPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             {/* Search */}
             <div className="lg:col-span-2">
-              <label className="block text-sm font-bold mb-2 text-white">Search</label>
+              <label className="block text-sm font-bold mb-2 text-white">
+                Search
+              </label>
               <input
                 type="text"
                 value={searchQuery}
@@ -207,7 +238,9 @@ export default function CollectionPage() {
 
             {/* Rarity Filter */}
             <div>
-              <label className="block text-sm font-bold mb-2 text-white">Rarity</label>
+              <label className="block text-sm font-bold mb-2 text-white">
+                Rarity
+              </label>
               <select
                 value={selectedRarity}
                 onChange={(e) => setSelectedRarity(e.target.value)}
@@ -225,7 +258,9 @@ export default function CollectionPage() {
 
             {/* Type Filter */}
             <div>
-              <label className="block text-sm font-bold mb-2 text-white">Type</label>
+              <label className="block text-sm font-bold mb-2 text-white">
+                Type
+              </label>
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
@@ -242,7 +277,9 @@ export default function CollectionPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Franchise Filter */}
             <div>
-              <label className="block text-sm font-bold mb-2 text-white">Franchise</label>
+              <label className="block text-sm font-bold mb-2 text-white">
+                Franchise
+              </label>
               <select
                 value={selectedFranchise}
                 onChange={(e) => setSelectedFranchise(e.target.value)}
@@ -259,10 +296,14 @@ export default function CollectionPage() {
 
             {/* Sort By */}
             <div>
-              <label className="block text-sm font-bold mb-2 text-white">Sort By</label>
+              <label className="block text-sm font-bold mb-2 text-white">
+                Sort By
+              </label>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as "name" | "rarity" | "unlocked")}
+                onChange={(e) =>
+                  setSortBy(e.target.value as "name" | "rarity" | "unlocked")
+                }
                 className="w-full px-4 py-3 bg-crossover-dark/50 border-2 border-crossover-accent/30 rounded-lg focus:ring-2 focus:ring-crossover-accent text-white"
               >
                 <option value="name">Name</option>
@@ -273,7 +314,9 @@ export default function CollectionPage() {
 
             {/* Sort Order */}
             <div>
-              <label className="block text-sm font-bold mb-2 text-white">Order</label>
+              <label className="block text-sm font-bold mb-2 text-white">
+                Order
+              </label>
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
@@ -295,8 +338,13 @@ export default function CollectionPage() {
           <div className="card-bg rounded-xl p-12 text-center border-2 border-crossover-primary/30">
             {cards.length === 0 ? (
               <>
-                <div className="text-3xl font-black text-white mb-4">Your Collection is Empty</div>
-                <div className="text-white/70 mb-6">Start collecting cards by playing games, spinning the wheel, or visiting the shop!</div>
+                <div className="text-3xl font-black text-white mb-4">
+                  Your Collection is Empty
+                </div>
+                <div className="text-white/70 mb-6">
+                  Start collecting cards by playing games, spinning the wheel,
+                  or visiting the shop!
+                </div>
                 <div className="flex gap-4 justify-center">
                   <a
                     href="/shop"
@@ -314,8 +362,12 @@ export default function CollectionPage() {
               </>
             ) : (
               <>
-                <div className="text-2xl font-bold text-white mb-2">No cards match your filters</div>
-                <div className="text-white/70">Try adjusting your search or filters</div>
+                <div className="text-2xl font-bold text-white mb-2">
+                  No cards match your filters
+                </div>
+                <div className="text-white/70">
+                  Try adjusting your search or filters
+                </div>
               </>
             )}
           </div>
@@ -326,24 +378,36 @@ export default function CollectionPage() {
                 key={`${card.type}-${card.id}`}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className={`card-bg rounded-xl p-6 border-4 ${getRarityClass(card.rarity)} hover:scale-105 transition-transform`}
+                className={`card-bg rounded-xl p-6 border-4 ${getRarityClass(
+                  card.rarity
+                )} hover:scale-105 transition-transform`}
               >
                 <div className="text-center mb-4">
                   {card.imageUrl && (
-                    <img
-                      src={card.imageUrl}
-                      alt={card.name}
-                      className="w-full h-48 object-cover rounded-lg mb-4 border-2 border-white/20"
-                    />
+                    <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden border-2 border-white/20">
+                      <Image
+                        src={card.imageUrl}
+                        alt={card.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                      />
+                    </div>
                   )}
-                  <h3 className="text-xl font-bold text-white mb-2">{card.name}</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {card.name}
+                  </h3>
                   <div className="text-sm font-semibold text-crossover-gold capitalize mb-1">
                     {card.rarity}
                   </div>
-                  <div className="text-xs text-white/70 mb-2">{card.franchise}</div>
+                  <div className="text-xs text-white/70 mb-2">
+                    {card.franchise}
+                  </div>
                   <div className="text-xs text-white/60 mb-2">{card.type}</div>
                   {card.description && (
-                    <p className="text-sm text-white/80 mb-4 line-clamp-2">{card.description}</p>
+                    <p className="text-sm text-white/80 mb-4 line-clamp-2">
+                      {card.description}
+                    </p>
                   )}
                   {card.type === "Character" && card.power && (
                     <div className="flex justify-center gap-4 text-xs text-white/70 mb-4">
@@ -362,6 +426,5 @@ export default function CollectionPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
-

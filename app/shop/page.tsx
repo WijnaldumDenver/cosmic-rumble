@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
+import Image from "next/image"
 
 interface Card {
   id: string
@@ -346,11 +347,15 @@ export default function ShopPage() {
               >
                 <div className="text-center mb-4">
                   {card.imageUrl && (
-                    <img
-                      src={card.imageUrl}
-                      alt={card.name}
-                      className="w-full h-48 object-cover rounded-lg mb-4 border-2 border-white/20"
-                    />
+                    <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden border-2 border-white/20">
+                      <Image
+                        src={card.imageUrl}
+                        alt={card.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                      />
+                    </div>
                   )}
                   <h3 className="text-xl font-bold text-white mb-2">{card.name}</h3>
                   <div className="text-sm font-semibold text-crossover-gold capitalize mb-1">
