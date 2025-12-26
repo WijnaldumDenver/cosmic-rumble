@@ -18,7 +18,7 @@ export class GameSocketServer {
     if (httpServer) {
       this.io = new SocketIOServer(httpServer, {
         cors: {
-          origin: process.env.NEXTAUTH_URL || "http://localhost:3000",
+          origin: process.env.NEXTAUTH_URL || process.env.CORS_ORIGIN || "http://localhost:3000",
           methods: ["GET", "POST"],
           credentials: true,
         },

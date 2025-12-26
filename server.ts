@@ -7,7 +7,7 @@ import next from "next"
 import { GameSocketServer } from "./lib/socket/server"
 
 const dev = process.env.NODE_ENV !== "production"
-const hostname = "localhost"
+const hostname = process.env.HOSTNAME || "0.0.0.0" // Railway needs 0.0.0.0
 const port = parseInt(process.env.PORT || "3000", 10)
 
 const app = next({ dev, hostname, port })
@@ -33,8 +33,9 @@ app.prepare().then(() => {
       console.error(err)
       process.exit(1)
     })
-    .listen(port, () => {
-      console.log(`> Ready on http://${hostname}:${port}`)
+    .listen(port, hostname, () => {
+      console.log(`> WebSocket server ready on http://${hostname}:${port}`)
+      console.log(`> Socket.io path: /api/socket`)
     })
 })
 
