@@ -22,9 +22,16 @@ export default function GamePage() {
       return
     }
 
+    // Check if WebSocket is available (custom server required)
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || window.location.origin
+    
     // Initialize socket connection
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000", {
+    const newSocket = io(socketUrl, {
       path: "/api/socket",
+      transports: ["polling", "websocket"],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     })
 
     newSocket.on("connect", () => {
@@ -35,13 +42,30 @@ export default function GamePage() {
       })
     })
 
+    newSocket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error)
+      setConnected(false)
+      // Show user-friendly message
+      if (error.message.includes("WebSocket endpoint") || error.message.includes("custom server")) {
+        // WebSocket server not available - fallback to polling or show message
+        console.warn("WebSocket server not available. Real-time features may be limited.")
+      }
+    })
+
     newSocket.on("game_state", (state) => {
       setGameState(state)
     })
 
     newSocket.on("error", (error) => {
       console.error("Socket error:", error)
-      alert(error.message || "Connection error")
+      // Don't show alert for connection errors, just log them
+      if (!error.message?.includes("WebSocket endpoint")) {
+        alert(error.message || "Connection error")
+      }
+    })
+
+    newSocket.on("disconnect", () => {
+      setConnected(false)
     })
 
     setSocket(newSocket)
@@ -79,6 +103,26 @@ export default function GamePage() {
             {connected ? "⚡ Connected" : "⚠ Disconnected"}
           </div>
         </div>
+
+        {!connected && (
+          <div className="card-bg rounded-xl p-6 mb-6 border-2 border-yellow-500/50 bg-yellow-900/20">
+            <div className="flex items-center gap-3">
+              <div className="text-2xl">⚠️</div>
+              <div>
+                <div className="text-lg font-bold text-yellow-300 mb-1">
+                  WebSocket Server Not Available
+                </div>
+                <div className="text-sm text-yellow-200/80">
+                  Real-time multiplayer requires a custom server. Game state updates may be limited.
+                  <br />
+                  <span className="text-xs">
+                    To enable full functionality, deploy the custom server separately or use a WebSocket service.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {gameState ? (
           <div className="space-y-6">
