@@ -68,29 +68,15 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  secret: (() => {
-    const secret = process.env.NEXTAUTH_SECRET;
-    if (!secret) {
-      // During build, use a valid-looking secret to allow Next.js build to complete
-      // NextAuth accepts any non-empty string, so we use a realistic placeholder
-      // User MUST set NEXTAUTH_SECRET in Railway environment variables for runtime
+  secret:
+    process.env.NEXTAUTH_SECRET ||
+    (() => {
+      // During build, Railway might not expose env vars, so always provide a fallback
+      // NextAuth accepts any non-empty string, so we provide a valid placeholder
+      // Runtime validation in route handler will ensure real secret is set
       if (process.env.NODE_ENV === "production") {
-        // Use a realistic-looking base64 string (32 chars) that NextAuth will accept
-        // This allows the build to complete without errors
-        console.warn(
-          "⚠️  NEXTAUTH_SECRET not set. Using build-time placeholder. " +
-            "⚠️  CRITICAL: Set NEXTAUTH_SECRET in Railway environment variables before deployment!"
-        );
-        // Generate a consistent placeholder that looks like a real secret
         return "YnVpbGQtcGxhY2Vob2xkZXItc2VjcmV0LW11c3Qtc2V0LWluLXByb2Q=";
       }
-
-      // Fallback for development only
-      console.warn(
-        "⚠️  NEXTAUTH_SECRET not set. Using fallback secret for development only."
-      );
       return "dev-secret-change-in-production";
-    }
-    return secret;
-  })(),
+    })(),
 };

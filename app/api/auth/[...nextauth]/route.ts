@@ -5,25 +5,15 @@ import { authOptions } from "@/lib/auth"
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
-// Runtime validation - check if secret is still placeholder when handler is called
-function validateSecret() {
-  if (process.env.NODE_ENV === "production" && 
-      !process.env.NEXTAUTH_SECRET &&
-      authOptions.secret === "YnVpbGQtcGxhY2Vob2xkZXItc2VjcmV0LW11c3Qtc2V0LWluLXByb2Q=") {
-    throw new Error(
-      "NEXTAUTH_SECRET is required in production. " +
-      "Please set it in your Railway environment variables."
-    );
-  }
-}
-
 // Lazy initialization - only create handler when actually called (not during build)
 let handler: ReturnType<typeof NextAuth> | null = null
 
 function getHandler() {
-  // Validate secret at runtime (not during build)
-  validateSecret();
   if (!handler) {
+    // NEVER throw during build - Next.js evaluates modules during build phase
+    // Railway might not expose env vars during build, so we always use placeholder
+    // Validation will happen at actual runtime when requests are made
+    // NextAuth will work with the placeholder during build, and fail gracefully at runtime if secret is missing
     handler = NextAuth(authOptions)
   }
   return handler

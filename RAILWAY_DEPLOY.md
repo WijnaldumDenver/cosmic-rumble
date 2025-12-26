@@ -46,6 +46,8 @@ In Railway dashboard:
 
 ⚠️ **CRITICAL**: Set these environment variables BEFORE deploying, as they're needed during the build phase!
 
+**Note**: If you're getting "NEXTAUTH_SECRET is required" errors even after setting the variable, see `RAILWAY_NEXTAUTH_FIX.md` for troubleshooting steps.
+
 In Railway, go to your service → **Variables** tab and add:
 
 ### Required Variables:
