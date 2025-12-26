@@ -63,18 +63,20 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-center mb-6">Sign Up</h1>
+      <div className="max-w-md w-full card-bg rounded-xl p-8 border-2 border-crossover-gold/30">
+        <h1 className="text-4xl font-black text-center mb-6 bg-crossover-gold bg-clip-text text-transparent">
+          Join the Battle
+        </h1>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <div className="bg-red-900/50 border-2 border-red-500/50 text-red-200 px-4 py-3 rounded-lg">
               {error}
             </div>
           )}
           
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-2">
+            <label htmlFor="email" className="block text-sm font-bold mb-2 text-white">
               Email *
             </label>
             <input
@@ -83,12 +85,12 @@ export default function SignUpPage() {
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-crossover-dark/50 border-2 border-crossover-accent/30 rounded-lg focus:ring-2 focus:ring-crossover-accent focus:border-crossover-accent text-white placeholder-white/50"
             />
           </div>
           
           <div>
-            <label htmlFor="username" className="block text-sm font-medium mb-2">
+            <label htmlFor="username" className="block text-sm font-bold mb-2 text-white">
               Username *
             </label>
             <input
@@ -97,12 +99,12 @@ export default function SignUpPage() {
               value={formData.username}
               onChange={(e) => setFormData({ ...formData, username: e.target.value })}
               required
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-crossover-dark/50 border-2 border-crossover-accent/30 rounded-lg focus:ring-2 focus:ring-crossover-accent focus:border-crossover-accent text-white placeholder-white/50"
             />
           </div>
           
           <div>
-            <label htmlFor="realName" className="block text-sm font-medium mb-2">
+            <label htmlFor="realName" className="block text-sm font-bold mb-2 text-white">
               Real Name (optional)
             </label>
             <input
@@ -110,12 +112,12 @@ export default function SignUpPage() {
               type="text"
               value={formData.realName}
               onChange={(e) => setFormData({ ...formData, realName: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-crossover-dark/50 border-2 border-crossover-accent/30 rounded-lg focus:ring-2 focus:ring-crossover-accent focus:border-crossover-accent text-white placeholder-white/50"
             />
           </div>
           
           <div>
-            <label htmlFor="dateOfBirth" className="block text-sm font-medium mb-2">
+            <label htmlFor="dateOfBirth" className="block text-sm font-bold mb-2 text-white">
               Date of Birth (optional)
             </label>
             <input
@@ -123,12 +125,12 @@ export default function SignUpPage() {
               type="date"
               value={formData.dateOfBirth}
               onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-crossover-dark/50 border-2 border-crossover-accent/30 rounded-lg focus:ring-2 focus:ring-crossover-accent focus:border-crossover-accent text-white"
             />
           </div>
           
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-2">
+            <label htmlFor="password" className="block text-sm font-bold mb-2 text-white">
               Password *
             </label>
             <input
@@ -137,12 +139,12 @@ export default function SignUpPage() {
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-crossover-dark/50 border-2 border-crossover-accent/30 rounded-lg focus:ring-2 focus:ring-crossover-accent focus:border-crossover-accent text-white placeholder-white/50"
             />
           </div>
           
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-bold mb-2 text-white">
               Confirm Password *
             </label>
             <input
@@ -151,22 +153,22 @@ export default function SignUpPage() {
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               required
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-crossover-dark/50 border-2 border-crossover-accent/30 rounded-lg focus:ring-2 focus:ring-crossover-accent focus:border-crossover-accent text-white placeholder-white/50"
             />
           </div>
           
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+            className="w-full btn-gold py-3 rounded-lg font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Creating account..." : "Sign Up"}
+            {loading ? "Creating account..." : "Join Now"}
           </button>
         </form>
         
-        <p className="mt-4 text-center text-sm">
+        <p className="mt-4 text-center text-sm text-white">
           Already have an account?{" "}
-          <Link href="/auth/signin" className="text-blue-600 hover:underline">
+          <Link href="/auth/signin" className="text-crossover-gold hover:text-crossover-orange font-bold underline">
             Sign in
           </Link>
         </p>

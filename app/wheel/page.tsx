@@ -61,18 +61,20 @@ export default function WheelPage() {
   return (
     <div className="min-h-screen p-8 flex items-center justify-center">
       <div className="max-w-2xl w-full">
-        <h1 className="text-4xl font-bold text-center mb-8">Weekly Wheel</h1>
+        <h1 className="text-5xl font-black text-center mb-8 bg-crossover-gradient bg-clip-text text-transparent">
+          Weekly Wheel of Fortune
+        </h1>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <div className="card-bg rounded-xl p-8 border-2 border-crossover-secondary/30">
           {/* Wheel Visual */}
           <div className="relative w-64 h-64 mx-auto mb-8">
             <motion.div
-              className="w-full h-full rounded-full border-8 border-gray-300 relative overflow-hidden"
+              className="w-full h-full rounded-full border-8 border-crossover-secondary relative overflow-hidden bg-crossover-gradient"
               animate={spinning ? { rotate: 360 * 5 } : { rotate: 0 }}
               transition={{ duration: 2, ease: "easeOut" }}
             >
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
+              <div className="absolute inset-0 flex items-center justify-center bg-crossover-dark/80 rounded-full m-2">
+                <div className="text-center text-white">
                   {spinning ? (
                     <div className="text-2xl font-bold">Spinning...</div>
                   ) : result ? (
@@ -92,17 +94,17 @@ export default function WheelPage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className={`mb-6 p-6 rounded-lg border-4 ${getRarityClass(result.rarity)}`}
+                className={`mb-6 p-6 rounded-xl border-4 ${getRarityClass(result.rarity)} card-bg`}
               >
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-2">You unlocked!</h2>
-                  <div className="text-xl font-semibold mb-2">{result.name}</div>
-                  <div className="text-sm capitalize">{result.rarity}</div>
+                  <h2 className="text-3xl font-black mb-2 text-white">YOU UNLOCKED!</h2>
+                  <div className="text-2xl font-bold mb-2 text-white">{result.name}</div>
+                  <div className="text-lg capitalize font-semibold text-crossover-gold">{result.rarity}</div>
                   {result.imageUrl && (
                     <img
                       src={result.imageUrl}
                       alt={result.name}
-                      className="w-32 h-32 mx-auto mt-4 rounded"
+                      className="w-32 h-32 mx-auto mt-4 rounded-lg border-2 border-crossover-gold/50"
                     />
                   )}
                 </div>
@@ -112,7 +114,7 @@ export default function WheelPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <div className="bg-red-900/50 border-2 border-red-500/50 text-red-200 px-4 py-3 rounded-lg mb-4">
               {error}
             </div>
           )}
@@ -121,12 +123,12 @@ export default function WheelPage() {
           <button
             onClick={handleSpin}
             disabled={spinning}
-            className="w-full bg-purple-600 text-white py-4 rounded-lg text-xl font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full btn-epic py-4 rounded-xl text-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {spinning ? "Spinning..." : "Spin the Wheel"}
+            {spinning ? "Spinning..." : "SPIN THE WHEEL"}
           </button>
 
-          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-4">
+          <p className="text-center text-sm text-white/80 mt-4">
             Spin once per week to unlock random cards!
           </p>
         </div>

@@ -41,27 +41,29 @@ export default function GameLobbyPage() {
   }
 
   if (status === "loading" || !session) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>
   }
 
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Game Lobby</h1>
+        <h1 className="text-5xl font-black mb-8 bg-crossover-gradient bg-clip-text text-transparent">
+          Battle Arena
+        </h1>
 
         <div className="mb-6">
           <button
             onClick={createGame}
             disabled={creating}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50"
+            className="btn-gold px-8 py-4 rounded-xl text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {creating ? "Creating..." : "Create New Game"}
+            {creating ? "Creating..." : "Create New Battle"}
           </button>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-semibold mb-4">Available Games</h2>
-          <p className="text-gray-600 dark:text-gray-400">
+        <div className="card-bg rounded-xl p-6 border-2 border-crossover-accent/30">
+          <h2 className="text-2xl font-bold mb-4 text-white">Available Games</h2>
+          <p className="text-white/80">
             Game browser coming soon. Create a game to get started!
           </p>
         </div>
@@ -69,9 +71,9 @@ export default function GameLobbyPage() {
         <div className="mt-6">
           <Link
             href="/dashboard"
-            className="text-blue-600 hover:underline"
+            className="text-crossover-gold hover:text-crossover-orange font-bold underline"
           >
-            ← Back to Dashboard
+            ← Back to Command Center
           </Link>
         </div>
       </div>

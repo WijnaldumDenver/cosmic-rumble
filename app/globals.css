@@ -3,59 +3,200 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --crossover-primary: #ff006e;
+  --crossover-secondary: #8338ec;
+  --crossover-accent: #3a86ff;
+  --crossover-gold: #ffbe0b;
+  --crossover-orange: #fb5607;
+  --crossover-dark: #0a0e27;
+  --crossover-darker: #050811;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: #ffffff;
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      135deg,
+      var(--crossover-darker) 0%,
+      var(--crossover-dark) 25%,
+      #1a1f3a 50%,
+      var(--crossover-dark) 75%,
+      var(--crossover-darker) 100%
+    ),
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(255, 0, 110, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 50%,
+      rgba(131, 56, 236, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 50% 80%,
+      rgba(58, 134, 255, 0.1) 0%,
+      transparent 50%
+    );
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
-/* Rarity Glow Effects */
+/* Epic Text Styles with High Contrast */
+h1, h2, h3, h4, h5, h6 {
+  text-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.5),
+    0 0 20px rgba(255, 0, 110, 0.3),
+    2px 2px 4px rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  font-weight: 800;
+}
+
+p, span, div, label {
+  text-shadow: 
+    1px 1px 2px rgba(0, 0, 0, 0.8),
+    0 0 4px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+}
+
+/* Card Backgrounds with High Contrast */
+.card-bg {
+  background: linear-gradient(
+    135deg,
+    rgba(10, 14, 39, 0.95) 0%,
+    rgba(26, 31, 58, 0.95) 100%
+  );
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Epic Button Styles */
+.btn-epic {
+  background: linear-gradient(135deg, var(--crossover-primary), var(--crossover-secondary));
+  box-shadow: 
+    0 4px 15px rgba(255, 0, 110, 0.4),
+    0 0 20px rgba(131, 56, 236, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  transition: all 0.3s ease;
+}
+
+.btn-epic:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(255, 0, 110, 0.6),
+    0 0 30px rgba(131, 56, 236, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--crossover-gold), var(--crossover-orange));
+  box-shadow: 
+    0 4px 15px rgba(255, 190, 11, 0.4),
+    0 0 20px rgba(251, 86, 7, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.btn-blue {
+  background: linear-gradient(135deg, var(--crossover-accent), #0066ff);
+  box-shadow: 
+    0 4px 15px rgba(58, 134, 255, 0.4),
+    0 0 20px rgba(0, 102, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Epic Rarity Glow Effects */
 .rarity-common {
-  border-color: #4a5568;
-  box-shadow: 0 0 5px rgba(74, 85, 104, 0.3);
+  border-color: #6b7280;
+  box-shadow: 
+    0 0 10px rgba(107, 114, 128, 0.5),
+    0 0 20px rgba(107, 114, 128, 0.3),
+    inset 0 0 10px rgba(107, 114, 128, 0.2);
 }
 
 .rarity-uncommon {
-  border-color: #22543d;
-  box-shadow: 0 0 8px rgba(34, 84, 61, 0.4);
+  border-color: #10b981;
+  box-shadow: 
+    0 0 15px rgba(16, 185, 129, 0.6),
+    0 0 30px rgba(16, 185, 129, 0.4),
+    inset 0 0 15px rgba(16, 185, 129, 0.2);
 }
 
 .rarity-rare {
-  border-color: #0ea5e9;
-  box-shadow: 0 0 12px rgba(14, 165, 233, 0.5);
+  border-color: #3b82f6;
+  box-shadow: 
+    0 0 20px rgba(59, 130, 246, 0.7),
+    0 0 40px rgba(59, 130, 246, 0.5),
+    inset 0 0 20px rgba(59, 130, 246, 0.2);
 }
 
 .rarity-epic {
-  border-color: #9333ea;
-  box-shadow: 0 0 16px rgba(147, 51, 234, 0.6);
+  border-color: #a855f7;
+  box-shadow: 
+    0 0 25px rgba(168, 85, 247, 0.8),
+    0 0 50px rgba(168, 85, 247, 0.6),
+    0 0 75px rgba(168, 85, 247, 0.4),
+    inset 0 0 25px rgba(168, 85, 247, 0.3);
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(131, 56, 236, 0.2));
 }
 
 .rarity-legendary {
   border-color: #fbbf24;
-  box-shadow: 0 0 20px rgba(251, 191, 36, 0.7);
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(255, 255, 255, 0.1));
+  box-shadow: 
+    0 0 30px rgba(251, 191, 36, 0.9),
+    0 0 60px rgba(251, 191, 36, 0.7),
+    0 0 90px rgba(251, 191, 36, 0.5),
+    inset 0 0 30px rgba(251, 191, 36, 0.4);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(255, 255, 255, 0.2));
+  animation: legendary-pulse 2s ease-in-out infinite;
 }
 
 .rarity-mythical {
   border-color: #fbbf24;
-  box-shadow: 0 0 25px rgba(251, 191, 36, 0.8), 0 0 15px rgba(255, 255, 255, 0.4);
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(255, 255, 255, 0.2));
+  box-shadow: 
+    0 0 40px rgba(251, 191, 36, 1),
+    0 0 80px rgba(251, 191, 36, 0.8),
+    0 0 120px rgba(255, 255, 255, 0.6),
+    inset 0 0 40px rgba(251, 191, 36, 0.5);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.4), rgba(255, 255, 255, 0.3));
+  animation: mythical-glow 2s ease-in-out infinite;
+}
+
+@keyframes legendary-pulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 30px rgba(251, 191, 36, 0.9),
+      0 0 60px rgba(251, 191, 36, 0.7),
+      0 0 90px rgba(251, 191, 36, 0.5),
+      inset 0 0 30px rgba(251, 191, 36, 0.4);
+  }
+  50% {
+    box-shadow: 
+      0 0 40px rgba(251, 191, 36, 1),
+      0 0 80px rgba(251, 191, 36, 0.9),
+      0 0 120px rgba(251, 191, 36, 0.7),
+      inset 0 0 40px rgba(251, 191, 36, 0.6);
+  }
+}
+
+@keyframes mythical-glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 40px rgba(251, 191, 36, 1),
+      0 0 80px rgba(251, 191, 36, 0.8),
+      0 0 120px rgba(255, 255, 255, 0.6),
+      inset 0 0 40px rgba(251, 191, 36, 0.5);
+  }
+  50% {
+    box-shadow: 
+      0 0 50px rgba(251, 191, 36, 1),
+      0 0 100px rgba(251, 191, 36, 1),
+      0 0 150px rgba(255, 255, 255, 0.8),
+      inset 0 0 50px rgba(251, 191, 36, 0.7);
+  }
 }
 

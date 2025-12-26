@@ -39,18 +39,20 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-center mb-6">Sign In</h1>
+      <div className="max-w-md w-full card-bg rounded-xl p-8 border-2 border-crossover-primary/30">
+        <h1 className="text-4xl font-black text-center mb-6 bg-crossover-gradient bg-clip-text text-transparent">
+          Enter the Arena
+        </h1>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <div className="bg-red-900/50 border-2 border-red-500/50 text-red-200 px-4 py-3 rounded-lg">
               {error}
             </div>
           )}
           
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-2">
+            <label htmlFor="email" className="block text-sm font-bold mb-2 text-white">
               Email
             </label>
             <input
@@ -59,12 +61,12 @@ export default function SignInPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-crossover-dark/50 border-2 border-crossover-accent/30 rounded-lg focus:ring-2 focus:ring-crossover-accent focus:border-crossover-accent text-white placeholder-white/50"
             />
           </div>
           
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-2">
+            <label htmlFor="password" className="block text-sm font-bold mb-2 text-white">
               Password
             </label>
             <input
@@ -73,23 +75,23 @@ export default function SignInPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-crossover-dark/50 border-2 border-crossover-accent/30 rounded-lg focus:ring-2 focus:ring-crossover-accent focus:border-crossover-accent text-white placeholder-white/50"
             />
           </div>
           
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            className="w-full btn-epic py-3 rounded-lg font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Entering..." : "Sign In"}
           </button>
         </form>
         
-        <p className="mt-4 text-center text-sm">
-          Don't have an account?{" "}
-          <Link href="/auth/signup" className="text-blue-600 hover:underline">
-            Sign up
+        <p className="mt-4 text-center text-sm text-white">
+          Don&apos;t have an account?{" "}
+          <Link href="/auth/signup" className="text-crossover-gold hover:text-crossover-orange font-bold underline">
+            Join the Battle
           </Link>
         </p>
       </div>
