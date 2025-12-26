@@ -59,7 +59,7 @@ export default function WheelPage() {
   }
 
   return (
-    <div className="min-h-screen p-8 flex items-center justify-center">
+    <div className="min-h-screen p-8 pb-24 flex items-center justify-center">
       <div className="max-w-2xl w-full">
         <h1 className="text-5xl font-black text-center mb-8 bg-crossover-gradient bg-clip-text text-transparent">
           Weekly Wheel of Fortune

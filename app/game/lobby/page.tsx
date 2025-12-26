@@ -45,7 +45,7 @@ export default function GameLobbyPage() {
   }
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-8 pb-24">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-5xl font-black mb-8 bg-crossover-gradient bg-clip-text text-transparent">
           Battle Arena
@@ -66,15 +66,6 @@ export default function GameLobbyPage() {
           <p className="text-white/80">
             Game browser coming soon. Create a game to get started!
           </p>
-        </div>
-
-        <div className="mt-6">
-          <Link
-            href="/dashboard"
-            className="text-crossover-gold hover:text-crossover-orange font-bold underline"
-          >
-            ← Back to Command Center
-          </Link>
         </div>
       </div>
     </div>

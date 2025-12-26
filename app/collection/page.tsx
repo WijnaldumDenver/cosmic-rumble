@@ -154,7 +154,7 @@ export default function CollectionPage() {
   }
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-8 pb-24">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-5xl font-black bg-crossover-gradient bg-clip-text text-transparent">

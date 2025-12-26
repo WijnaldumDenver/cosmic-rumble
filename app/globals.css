@@ -200,3 +200,11 @@ p, span, div, label {
   }
 }
 
+/* Navigation Styles */
+@media (max-width: 640px) {
+  /* Ensure navigation doesn't overlap on mobile */
+  .min-h-screen {
+    padding-bottom: 6rem !important;
+  }
+}
+

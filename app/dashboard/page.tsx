@@ -27,7 +27,7 @@ export default async function DashboardPage() {
     : "0.0"
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-8 pb-24">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-5xl font-black mb-8 bg-crossover-gradient bg-clip-text text-transparent">
           Command Center

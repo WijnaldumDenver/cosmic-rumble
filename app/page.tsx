@@ -6,7 +6,7 @@ export default async function Home() {
   const session = await getServerSession(authOptions);
 
   return (
-    <main className="min-h-screen p-8 flex items-center justify-center">
+    <main className="min-h-screen p-8 pb-24 flex items-center justify-center">
       <div className="max-w-4xl mx-auto text-center">
         <h1 className="text-6xl md:text-8xl font-black mb-4 bg-crossover-gradient bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,0,110,0.8)]">
           UniRumble
