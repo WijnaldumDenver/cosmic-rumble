@@ -1,6 +1,7 @@
 # Complete Railway Setup Guide for server.ts
 
 ## The Problem
+
 Railway shows "deployed complete" but you can't make requests. This usually means Railway is running Next.js's default server instead of your custom `server.ts`.
 
 ## Step-by-Step Setup
@@ -8,11 +9,13 @@ Railway shows "deployed complete" but you can't make requests. This usually mean
 ### Step 1: Verify Railway Configuration
 
 1. **Go to Railway Dashboard**:
+
    - Navigate to your service
    - Click **Settings** tab
    - Scroll to **Deploy** section
 
 2. **Check Start Command**:
+
    - It MUST be: `tsx server.ts`
    - If it says `next start` or `npm start`, change it to `tsx server.ts`
    - Click **Save**
@@ -39,6 +42,7 @@ CORS_ORIGIN=https://your-main-app.vercel.app (optional)
 
 1. Go to **Deploy Logs** tab (NOT Build Logs)
 2. Look for these messages:
+
    ```
    > WebSocket server ready on http://0.0.0.0:PORT
    > Socket.io path: /api/socket
@@ -60,13 +64,15 @@ CORS_ORIGIN=https://your-main-app.vercel.app (optional)
 ### Step 5: Test the Health Endpoint
 
 After deployment, test:
+
 ```
 https://your-service.railway.app/api/health
 ```
 
 Should return:
+
 ```json
-{"status":"ok","service":"unirumble"}
+{ "status": "ok", "service": "unirumble" }
 ```
 
 If this works, your server is running correctly.
@@ -81,11 +87,13 @@ If this works, your server is running correctly.
 
 ### Issue 1: Railway Using Next.js Default Server
 
-**Symptoms**: 
+**Symptoms**:
+
 - Deploy logs show "Next.js ready" instead of "WebSocket server ready"
 - Can't access `/api/socket/`
 
 **Fix**:
+
 1. Go to Settings → Deploy
 2. Set Start Command to: `tsx server.ts`
 3. Save and redeploy
@@ -93,10 +101,12 @@ If this works, your server is running correctly.
 ### Issue 2: Server Crashes After Startup
 
 **Symptoms**:
+
 - Deploy logs show server starting, then nothing
 - HTTP logs show 502 errors
 
 **Fix**:
+
 1. Check Deploy Logs for error messages
 2. Common causes:
    - Missing `DATABASE_URL`
@@ -107,10 +117,12 @@ If this works, your server is running correctly.
 ### Issue 3: Health Check Failing
 
 **Symptoms**:
+
 - Railway shows "Application failed to respond"
 - Health endpoint returns 502
 
 **Fix**:
+
 1. The health check is already configured in `railway.json`
 2. Make sure `/api/health` endpoint works (test it directly)
 3. Check Deploy Logs to see if server is actually running
@@ -118,9 +130,11 @@ If this works, your server is running correctly.
 ### Issue 4: Port Mismatch
 
 **Symptoms**:
+
 - Server starts but Railway can't reach it
 
 **Fix**:
+
 - Railway automatically sets `PORT` environment variable
 - Your server already uses `process.env.PORT`
 - Don't manually set PORT in Railway variables
@@ -154,18 +168,22 @@ curl https://your-service.railway.app/api/socket/
 ## If Still Not Working
 
 1. **Check Railway Service Type**:
+
    - Must be "Web Service"
    - If it's "Static Site", recreate the service
 
 2. **Verify Start Command**:
+
    - Railway dashboard → Settings → Deploy
    - Must be exactly: `tsx server.ts`
 
 3. **Check for Errors**:
+
    - Deploy Logs tab for startup errors
    - HTTP Logs tab for request errors
 
 4. **Try Compiled Version**:
+
    - Change start command to: `node dist/server.js`
    - Make sure `build:server` runs during build
    - Update `railway.json` build command to include `pnpm build:server`
@@ -173,4 +191,3 @@ curl https://your-service.railway.app/api/socket/
 5. **Contact Railway Support**:
    - If everything looks correct but still not working
    - Share your Deploy Logs with them
-
