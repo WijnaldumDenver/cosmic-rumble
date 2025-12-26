@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import { LogoutButton } from "@/components/LogoutButton"
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
@@ -29,9 +30,15 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen p-8 pb-24">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-5xl font-black mb-8 bg-crossover-gradient bg-clip-text text-transparent">
-          Command Center
-        </h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-5xl font-black bg-crossover-gradient bg-clip-text text-transparent">
+            Command Center
+          </h1>
+          <div className="flex items-center gap-4">
+            <span className="text-white/80 text-sm">Welcome, {session.user.username}</span>
+            <LogoutButton />
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* Rank Card */}
