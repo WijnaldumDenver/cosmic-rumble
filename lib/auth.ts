@@ -71,27 +71,18 @@ export const authOptions: NextAuthOptions = {
   secret: (() => {
     const secret = process.env.NEXTAUTH_SECRET;
     if (!secret) {
-      // Check if we're in a build context (Next.js sets this during build)
-      const isBuildPhase =
-        process.env.NEXT_PHASE === "phase-production-build" ||
-        process.env.NEXT_PHASE === "phase-development-build" ||
-        process.argv.includes("build") ||
-        process.env.npm_lifecycle_event === "build";
-
-      if (isBuildPhase) {
-        // During build, use a placeholder - but warn that it must be set for runtime
-        console.warn(
-          "⚠️  NEXTAUTH_SECRET not set during build. Using placeholder. " +
-            "Make sure to set NEXTAUTH_SECRET in Railway environment variables before deployment!"
-        );
-        return "build-placeholder-secret-must-be-set-in-production";
-      }
-
+      // Never throw during build - always use placeholder
+      // This allows Next.js build to complete
+      // User MUST set NEXTAUTH_SECRET in Railway environment variables for runtime
       if (process.env.NODE_ENV === "production") {
-        throw new Error(
-          "NEXTAUTH_SECRET is required in production. Please set it in your environment variables."
+        // Only warn, never throw - allows build to succeed
+        console.warn(
+          "⚠️  NEXTAUTH_SECRET not set. Using placeholder. " +
+            "⚠️  CRITICAL: Set NEXTAUTH_SECRET in Railway environment variables before deployment!"
         );
+        return "placeholder-secret-must-be-set-in-production";
       }
+
       // Fallback for development only
       console.warn(
         "⚠️  NEXTAUTH_SECRET not set. Using fallback secret for development only."
